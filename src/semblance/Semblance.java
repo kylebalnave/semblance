@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import semblance.reporters.AbstractReport;
 import semblance.results.IResult;
 import semblance.runners.IRunner;
 
@@ -68,19 +69,21 @@ public class Semblance {
     public Semblance(String configUrlOrFilePath, String action) throws FileNotFoundException {
         Logger.getLogger(Semblance.class.getName()).log(Level.INFO, String.format("Loading config '%s'", configUrlOrFilePath));
         Config cf = new Config(new File(configUrlOrFilePath));
-        List<Map> actionData = (List<Map>) cf.getNestedValue(action);
-        if (actionData != null) {
-            List<IResult> allResults = new ArrayList<IResult>();
-            for (Map singleActionData : actionData) {
+        Map<Object, Object> actionData = (Map<Object, Object>) cf.getNestedValue(action);
+        if (actionData instanceof Map) {
+            List<IResult> actionResults = new ArrayList<IResult>();
+            List<Map<String, Object>> actionRunners = (List<Map<String, Object>>) actionData.get("runners");
+            List<Map<String, Object>> actionReporters = (List<Map<String, Object>>) actionData.get("reporters");
+            for (Map singleActionData : actionRunners) {
                 String runnerClassName = (String) singleActionData.get("runner");
                 if (runnerClassName instanceof String) {
-                    allResults.addAll(callRunner(runnerClassName, singleActionData));
+                    actionResults.addAll(callRunner(runnerClassName, singleActionData));
                 } else {
                     Logger.getLogger(getClass().getName()).log(Level.WARNING, String.format("Each config Map requires a 'runner' key."));
                 }
             }
-            //
-            // create each report
+            // @TODO output each report here
+            // @TODO use getReporter
         }
     }
 
@@ -108,5 +111,20 @@ public class Semblance {
             }
         }
         return runnerResults;
+    }
+
+    private Constructor<AbstractReport> getReporter(String className) {
+        if (!className.startsWith("//")) {
+            try {
+                Class<AbstractReport> runnerClass;
+                runnerClass = (Class<AbstractReport>) Class.forName(className);
+                return runnerClass.getDeclaredConstructor(List.class);
+            } catch (Exception ex) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Exception!", ex);
+            } catch (Error ex) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Error!", ex);
+            }
+        }
+        return null;
     }
 }
