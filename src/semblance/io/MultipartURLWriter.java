@@ -1,4 +1,4 @@
-package io;
+package semblance.io;
 /*
  * SOURCE:-
  * http://www.codejava.net/java-se/networking/upload-files-by-sending-multipart-request-programmatically

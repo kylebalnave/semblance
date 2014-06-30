@@ -26,7 +26,7 @@ import semblance.results.IResult;
  *
  * @author balnave
  */
-public class SystemLogReport extends AbstractReport {
+public class SystemLogReport extends Report {
 
     public SystemLogReport(List<IResult> results) {
         super(results);

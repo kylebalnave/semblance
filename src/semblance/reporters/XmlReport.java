@@ -39,7 +39,7 @@ import semblance.results.IResult;
  *
  * @author kyleb2
  */
-public class XmlReport extends AbstractReport {
+public class XmlReport extends Report {
 
     protected final Document doc;
 

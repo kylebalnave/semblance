@@ -28,7 +28,7 @@ import semblance.results.IResult;
  *
  * @author balnave
  */
-public abstract class AbstractReport {
+public abstract class Report {
 
     protected final List<IResult> results;
 
@@ -37,7 +37,7 @@ public abstract class AbstractReport {
      *
      * @param results
      */
-    public AbstractReport(List<IResult> results) {
+    public Report(List<IResult> results) {
         this.results = results;
         Collections.sort(this.results, new Comparator<IResult>() {
             @Override

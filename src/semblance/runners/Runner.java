@@ -16,9 +16,17 @@
  */
 package semblance.runners;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import semblance.json.JSONParser;
+import semblance.reflection.ClassCreator;
+import semblance.reporters.Report;
 import semblance.results.IResult;
 
 /**
@@ -31,8 +39,23 @@ public abstract class Runner {
     protected List<IResult> results = new ArrayList<IResult>();
     protected Map<String, Object> config;
 
+    /**
+     * Initialiser with config data
+     *
+     * @param config
+     */
     public Runner(Map<String, Object> config) {
         this.config = config;
+    }
+
+    /**
+     * Initialiser with config path
+     *
+     * @param pathToJson
+     */
+    public Runner(String pathToJson) {
+        JSONParser jParser = new JSONParser(pathToJson);
+        config = (Map<String, Object>) jParser.getJson();
     }
 
     /**
@@ -45,47 +68,80 @@ public abstract class Runner {
     public abstract List<IResult> run() throws Exception, Error;
 
     /**
-     * Outputs reports
+     * Outputs reports to a file
      */
     public void report() {
-        List<String> reportPaths = (List<String>) getConfigValue("reports", new ArrayList());
-        /*
-         if (reportPaths != null) {
-         for (String reportPath : reportPaths) {
-         File reportFile = new File(reportPath);
-         if (reportFile != null && reportFile.getParent() != null) {
-         File reportDir = new File(reportFile.getParent());
-         reportDir.mkdirs();
-         }
-         if (reportPath.toLowerCase().endsWith(".xml")) {
-         new XmlReport(getResults()).out(reportPath);
-         } else if (reportPath.toLowerCase().endsWith(".junit")) {
-         new JunitReport(getResults()).out(reportPath);
-         } else if (reportPath.equalsIgnoreCase("system")) {
-         new SystemLogReport(getResults()).out();
-         }
-         }
-         } else {
-         new SystemLogReport(getResults()).out();
-         }
-         */
-
+        List<Map<String, String>> reportList = (List<Map<String, String>>) getConfigValue("reports", new ArrayList());
+        for (Map<String, String> reportData : reportList) {
+            String out = reportData.get("out");
+            String className = reportData.get("className");
+            File reportFile = new File(out);
+            if (reportFile.getParent() != null) {
+                try {
+                    File reportDir = new File(reportFile.getParent());
+                    reportDir.mkdirs();
+                    ClassCreator<Report> cLoader = new ClassCreator<Report>(className);
+                    Constructor<Report> constructor = cLoader.getConstructor(List.class);
+                    Report report = constructor.newInstance(this.results);
+                    report.out(out);
+                } catch (InstantiationException ex) {
+                    Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalArgumentException ex) {
+                    Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InvocationTargetException ex) {
+                    Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 
     /**
      * Gets a value from the Config
+     *
      * @param key
      * @param defaultValue
-     * @return 
+     * @return
      */
     protected Object getConfigValue(String key, Object defaultValue) {
-        if(config != null && config.containsKey(key)) {
+        if (config != null && config.containsKey(key)) {
             return config.get(key);
         }
         return defaultValue;
     }
-    
+
+    /**
+     * Gets a value from the Config
+     *
+     * @param key
+     * @return
+     */
     protected Object getConfigValue(String key) {
         return getConfigValue(key, null);
+    }
+
+    /**
+     * Gets a Report Constructor
+     *
+     * @param className
+     * @return
+     */
+    protected Constructor<Report> getReporterConstructor(String className) {
+        try {
+            Class<Report> runnerClass;
+            runnerClass = (Class<Report>) Class.forName(className);
+            return runnerClass.getDeclaredConstructor(List.class);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Exception!", ex);
+        } catch (NoSuchMethodException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Exception!", ex);
+        } catch (SecurityException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Exception!", ex);
+        } catch (Error ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Error!", ex);
+        }
+        return null;
+
     }
 }

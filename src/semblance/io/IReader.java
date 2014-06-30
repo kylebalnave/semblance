@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2014 balnave
  *
@@ -14,23 +13,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package semblance.runners;
+ */
 
-import java.util.List;
-import semblance.results.IResult;
+package semblance.io;
 
 /**
- * A Runner Interface
+ * Interface for a string loader
  * @author balnave
  */
-public interface IRunner {
+public interface IReader {
         
-    /**
-     * Calls the Runner to begin
-     * @return
-     * @throws Exception
-     * @throws Error 
-     */
-    public List<IResult> run() throws Exception, Error;
-   
+    public String load();
+    
 }

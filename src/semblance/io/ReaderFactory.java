@@ -15,33 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package io;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+package semblance.io;
 
 /**
- *
+ * Creates Readers
  * @author balnave
  */
-public class LocalFileReader extends AbstractReader implements IReader {
+public class ReaderFactory {
     
-    private String message;
-
-    public String getMessage() {
-        return message;
-    }
-    
-    @Override
-    public String load(String uri) {
-        try {
-            FileInputStream fis = new FileInputStream(new File(uri));
-            return readInputStream(fis);
-        } catch (FileNotFoundException ex) {
-            this.message = ex.getMessage();
-            return "";
+    public IReader getReader(String urlOrFilePath) {
+        IReader reader = null;
+        if(urlOrFilePath.startsWith("http://") || urlOrFilePath.startsWith("https://")) {
+            reader = new URLReader(urlOrFilePath);
+        } else if(urlOrFilePath.startsWith("file://")) {
+            reader = new LocalFileReader(urlOrFilePath);
         }
+        return reader;
     }
     
 }
