@@ -44,14 +44,14 @@ public class SystemLogReport extends AbstractReport {
     protected String doForEachPassedResult(IResult result) {
         return String.format("Pass:'%s' -- Url:'%s'\n",
                 result.getMessage(),
-                result.getURIString());
+                result.getName());
     }
 
     @Override
     protected String doForEachFailedResult(IResult result) {
         return String.format("Fail:'%s' -- Url:'%s'\nMessage:'%s'\n",
                 result.getMessage(),
-                result.getURIString(),
+                result.getName(),
                 result.getReason());
     }
 
@@ -59,7 +59,7 @@ public class SystemLogReport extends AbstractReport {
     protected String doForEachErrorResult(IResult result) {
         return String.format("Error:'%s' -- Url:'%s'\nMessage:'%s'\n",
                 result.getMessage(),
-                result.getURIString(),
+                result.getName(),
                 result.getReason());
     }
 

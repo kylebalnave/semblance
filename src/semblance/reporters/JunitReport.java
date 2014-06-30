@@ -58,7 +58,7 @@ public class JunitReport extends XmlReport {
     protected Element doForEachPassedResult(IResult result) {
         // staff elements
         Element element = doc.createElement("testcase");
-        element.setAttribute("name", result.getURIString());
+        element.setAttribute("name", result.getName());
         element.setAttribute("tests", "1");
         element.setAttribute("assertions", "1");
         element.setAttribute("failures", result.hasFailed()? "1" : "0");

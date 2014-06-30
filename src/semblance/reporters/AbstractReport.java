@@ -42,7 +42,7 @@ public abstract class AbstractReport {
         Collections.sort(this.results, new Comparator<IResult>() {
             @Override
             public int compare(IResult o1, IResult o2) {
-                return o1.getURIString().compareToIgnoreCase(o2.getURIString());
+                return o1.getName().compareToIgnoreCase(o2.getName());
             }
         });
     }

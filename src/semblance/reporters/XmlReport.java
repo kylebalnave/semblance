@@ -117,7 +117,7 @@ public class XmlReport extends AbstractReport {
     @Override
     protected Element doForEachPassedResult(IResult result) {
         Element element = doc.createElement("result");
-        element.setAttribute("url", result.getURIString());
+        element.setAttribute("url", result.getName());
         element.setAttribute("code", String.valueOf(result.getMessage()));
         element.setAttribute("status", "pass");
         return element;

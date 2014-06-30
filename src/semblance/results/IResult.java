@@ -6,7 +6,7 @@ package semblance.results;
  */
 public interface IResult {
 
-    public String getURIString();
+    public String getName();
     
     public String getSource();
     
