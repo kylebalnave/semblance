@@ -24,27 +24,27 @@ package semblance.results;
  */
 public class ErrorResult extends Result {
 
-    public ErrorResult(String uri, boolean hasPassed) {
-        super(uri, hasPassed);
+    public ErrorResult(String uri) {
+        super(uri, false);
     }
 
-    public ErrorResult(String uri, boolean hasPassed, String message) {
-        super(uri, hasPassed, message);
+    public ErrorResult(String uri, String message) {
+        super(uri, false, message);
     }
 
-    public ErrorResult(String uri, boolean hasPassed, String message, String reason) {
-        super(uri, hasPassed, message, reason);
+    public ErrorResult(String uri, String message, String reason) {
+        super(uri, false, message, reason);
     }
 
-    public ErrorResult(String uri, boolean hasPassed, String message, String reason, int line, int paragraph) {
-        super(uri, hasPassed, message, reason, line, paragraph);
+    public ErrorResult(String uri, String message, String reason, int line, int paragraph) {
+        super(uri, false, message, reason, line, paragraph);
     }
 
-    public ErrorResult(String uri, boolean hasPassed, String message, String reason, int line, int paragraph, long executionTimeMs) {
-        super(uri, hasPassed, message, reason, line, paragraph, executionTimeMs);
+    public ErrorResult(String uri, String message, String reason, int line, int paragraph, long executionTimeMs) {
+        super(uri, false, message, reason, line, paragraph, executionTimeMs);
     }
 
-    public ErrorResult(String uri, boolean hasPassed, String message, String reason, String source, int line, int paragraph, long executionTimeMs) {
-        super(uri, hasPassed, message, reason, source, line, paragraph, executionTimeMs);
+    public ErrorResult(String uri, String message, String reason, String source, int line, int paragraph, long executionTimeMs) {
+        super(uri, false, message, reason, source, line, paragraph, executionTimeMs);
     }
 }

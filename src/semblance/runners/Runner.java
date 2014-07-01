@@ -18,23 +18,27 @@ package semblance.runners;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import semblance.data.MapHelper;
 import semblance.json.JSONParser;
 import semblance.reflection.ClassCreator;
 import semblance.reporters.Report;
 import semblance.results.IResult;
 
 /**
- * The concrete implementation of IRunner
+ * The an Abstract Class for Semblance Runners
  *
  * @author balnave
  */
 public abstract class Runner {
+    
+    public static final String KEY_REPORT_REPORTS = "reports";
+    public static final String KEY_REPORT_OUT = "out";
+    public static final String KEY_REPORT_CLASS = "className";
 
     protected List<IResult> results = new ArrayList<IResult>();
     protected Map<String, Object> config;
@@ -68,31 +72,33 @@ public abstract class Runner {
     public abstract List<IResult> run() throws Exception, Error;
 
     /**
-     * Outputs reports to a file
+     * Outputs reports
      */
     public void report() {
-        List<Map<String, String>> reportList = (List<Map<String, String>>) getConfigValue("reports", new ArrayList());
-        for (Map<String, String> reportData : reportList) {
-            String out = reportData.get("out");
-            String className = reportData.get("className");
-            File reportFile = new File(out);
-            if (reportFile.getParent() != null) {
-                try {
-                    File reportDir = new File(reportFile.getParent());
-                    reportDir.mkdirs();
-                    ClassCreator<Report> cLoader = new ClassCreator<Report>(className);
-                    Constructor<Report> constructor = cLoader.getConstructor(List.class);
-                    Report report = constructor.newInstance(this.results);
-                    report.out(out);
-                } catch (InstantiationException ex) {
-                    Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IllegalAccessException ex) {
-                    Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IllegalArgumentException ex) {
-                    Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InvocationTargetException ex) {
-                    Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
+        List<Map<String, String>> reportList = (List<Map<String, String>>) getConfigValue(KEY_REPORT_REPORTS, new ArrayList());
+        for (Map reportData : reportList) {
+            try {
+                String out = (String) MapHelper.getValue(reportData, KEY_REPORT_OUT, "");
+                String className = (String) MapHelper.getValue(reportData, KEY_REPORT_CLASS, "");
+                if (!out.isEmpty()) {
+                    File reportFile = new File(out);
+                    if (reportFile.getParent() != null) {
+                        File reportDir = new File(reportFile.getParent());
+                        reportDir.mkdirs();
+                        ClassCreator<Report> cLoader = new ClassCreator<Report>(className);
+                        Constructor<Report> constructor = cLoader.getConstructor(List.class);
+                        Report report = cLoader.newInstance(constructor, results);
+                        if (report != null) {
+                            report.out(out);
+                        } else {
+                            Logger.getLogger(getClass().getName()).warning(String.format("Cannot find Report Class %s", className));
+                        }
+                    }
                 }
+            } catch (Exception ex) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Exception creating report", ex);
+            } catch (Error er) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error creating report", er);
             }
         }
     }
@@ -105,10 +111,7 @@ public abstract class Runner {
      * @return
      */
     protected Object getConfigValue(String key, Object defaultValue) {
-        if (config != null && config.containsKey(key)) {
-            return config.get(key);
-        }
-        return defaultValue;
+        return MapHelper.getValue(config, key, defaultValue);
     }
 
     /**
@@ -121,27 +124,4 @@ public abstract class Runner {
         return getConfigValue(key, null);
     }
 
-    /**
-     * Gets a Report Constructor
-     *
-     * @param className
-     * @return
-     */
-    protected Constructor<Report> getReporterConstructor(String className) {
-        try {
-            Class<Report> runnerClass;
-            runnerClass = (Class<Report>) Class.forName(className);
-            return runnerClass.getDeclaredConstructor(List.class);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Exception!", ex);
-        } catch (NoSuchMethodException ex) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Exception!", ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Exception!", ex);
-        } catch (Error ex) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Error!", ex);
-        }
-        return null;
-
-    }
 }
