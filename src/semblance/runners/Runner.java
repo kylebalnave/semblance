@@ -19,6 +19,7 @@ package semblance.runners;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -49,6 +50,7 @@ public abstract class Runner {
      * @param config
      */
     public Runner(Map<String, Object> config) {
+        Logger.getLogger(getClass().getName()).info(String.format("Config set as Map"));
         this.config = config;
     }
 
@@ -58,8 +60,14 @@ public abstract class Runner {
      * @param pathToJson
      */
     public Runner(String pathToJson) {
-        JSONParser jParser = new JSONParser(pathToJson);
-        config = (Map<String, Object>) jParser.getJson();
+        if(!pathToJson.isEmpty()) {
+            Logger.getLogger(getClass().getName()).info(String.format("Loading config '%s'", pathToJson));
+            JSONParser jParser = new JSONParser(pathToJson);
+            config = (Map<String, Object>) jParser.getJson();
+        } else {
+            Logger.getLogger(getClass().getName()).severe(String.format("Config path cannot be empty"));
+            config = new HashMap();
+        }
     }
 
     /**

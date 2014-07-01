@@ -42,8 +42,9 @@ public class ClassCreator<T> {
      * @return 
      */
     public T newInstance(Constructor<T> constructor, Object... params) {
+        T instance = null;
         try {
-            return constructor != null ? constructor.newInstance(params) : null;
+            instance = constructor.newInstance(params);
         } catch (InstantiationException ex) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
@@ -53,7 +54,7 @@ public class ClassCreator<T> {
         } catch (InvocationTargetException ex) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return instance;
     }
 
     /**
@@ -62,7 +63,7 @@ public class ClassCreator<T> {
      * @return 
      */
     public Constructor<T> getConstructor(Class... definitionClasses) {
-        Constructor<T> constructor;
+        Constructor<T> constructor = null;
         Class<T> definition = getClassDefinition();
         try {
             constructor = definition == null ? null : definition.getDeclaredConstructor(definitionClasses);
@@ -71,7 +72,7 @@ public class ClassCreator<T> {
         } catch (SecurityException ex) {
             Logger.getLogger(ClassCreator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return constructor;
     }
 
     private Class<T> getClassDefinition() {

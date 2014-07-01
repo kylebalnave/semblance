@@ -27,7 +27,7 @@ public class ReaderFactory {
         IReader reader = null;
         if(urlOrFilePath.startsWith("http://") || urlOrFilePath.startsWith("https://")) {
             reader = new URLReader(urlOrFilePath);
-        } else if(urlOrFilePath.startsWith("file://")) {
+        } else {
             reader = new LocalFileReader(urlOrFilePath);
         }
         return reader;

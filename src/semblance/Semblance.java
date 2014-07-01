@@ -116,14 +116,15 @@ public class Semblance {
         // call the runner
         if (runner != null) {
             try {
+                Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Calling Runner '%s'", runnerClassName));
                 results.addAll(runner.run());
                 runner.report();
             } catch (Exception ex) {
                 results.add(new ErrorResult(runnerClassName, "Uncaught Exception processing runner"));
-                Logger.getLogger(Semblance.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
             } catch (Error ex) {
                 results.add(new ErrorResult(runnerClassName, "Uncaught Error processing runner"));
-                Logger.getLogger(Semblance.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }
         return results;
