@@ -69,6 +69,7 @@ public abstract class Runner {
             config = new HashMap();
         }
     }
+    
 
     /**
      * Calls the Runner to begin
