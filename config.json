@@ -1,11 +1,16 @@
 {
+   "classpaths" : [
+       "../affirmation/dist/",
+       "../disparity/dist/",
+       "../snapshot/dist/"
+   ],
    "dev":[
 
    ],
    "dist":{
       "runners":[
          {
-            "className":"snapshot.runners.SnapshotRunner",
+            "className":"snapshot.runners.ScreenshotRunner",
             "out":"./snaps/",
             "urls":[
                "http://www.ronseal.info/"
@@ -18,7 +23,7 @@
             ],
             "drivers":[
                {
-                  "name":"firefox",
+                  "name":"phantomjs",
                   "version":"",
                   "hub":""
                }
@@ -32,8 +37,8 @@
          },
          {
             "className":"disparity.runners.DisparityRunner",
-            "in":"./screenshots2/",
-            "out":"./screenshots2/",
+            "in":"./snaps/",
+            "out":"./snaps/",
             "fuzzyness":40,
             "reports":[
                {

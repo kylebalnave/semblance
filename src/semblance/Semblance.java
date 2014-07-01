@@ -16,14 +16,18 @@
  */
 package semblance;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import semblance.data.MapHelper;
+import semblance.io.FileUtils;
 import semblance.io.URLReader;
 import semblance.json.JSONParser;
 import semblance.reflection.ClassCreator;
@@ -44,6 +48,7 @@ public class Semblance {
     public static final String KEY_REPORT_RUNNERS_LIST = "runners";
     public static final String KEY_REPORT_RUNNER = "className";
     public static final String KEY_REPORT_CLASS = "className";
+    public static final String KEY_PLUGIN_DIRS = "classpaths";
 
     /**
      * @param args the command line arguments
@@ -76,12 +81,37 @@ public class Semblance {
      * @throws java.io.FileNotFoundException
      */
     public Semblance(String configUrlOrFilePath, String action) throws FileNotFoundException {
+        //
+        // load the JSON config
         Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Loading json config '%s'", configUrlOrFilePath));
         JSONParser jParser = new JSONParser(configUrlOrFilePath);
         Map config = (Map<String, Object>) jParser.getJson();
         Map actionMap = (Map) MapHelper.getValue(config, action);
         List<Map> actionRunners = (List<Map>) MapHelper.getValue(actionMap, KEY_REPORT_RUNNERS_LIST, new ArrayList());
         List<IResult> results = new ArrayList<IResult>();
+        //
+        // List all external plugin jars
+        List<String> pluginDirs = (List<String>) MapHelper.getValue(config, KEY_PLUGIN_DIRS, new ArrayList());
+        if (pluginDirs.isEmpty()) {
+            pluginDirs.add("./plugins");
+        }
+        for (String jarPath : pluginDirs) {
+            String pluginsPath = jarPath;
+            Map<String, File> plugins = FileUtils.listFiles(pluginsPath);
+            List<URL> urlList = new ArrayList<URL>();
+            for (File file : plugins.values()) {
+                if (file.getName().endsWith(".jar")) {
+                    try {
+                        Logger.getLogger(getClass().getName()).info(String.format("Loading jar '%s'", file.getAbsolutePath()));
+                        ClassCreator.addFile(file);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Semblance.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+        //
+        // Create a run each 
         for (Map singleActionData : actionRunners) {
             Runner runner = null;
             String runnerClassName = (String) MapHelper.getValue(singleActionData, KEY_REPORT_RUNNER, "");
@@ -103,9 +133,10 @@ public class Semblance {
 
     /**
      * Call a single Runner and return the Results
+     *
      * @param runnerClassName
      * @param configMap
-     * @return 
+     * @return
      */
     private List<IResult> callRunner(String runnerClassName, Map configMap) {
         List<IResult> results = new ArrayList<IResult>();
