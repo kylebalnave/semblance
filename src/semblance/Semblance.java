@@ -42,7 +42,7 @@ import semblance.runners.Runner;
 public class Semblance {
 
     public static final String KEY_REPORT_RUNNERS_LIST = "runners";
-    public static final String KEY_REPORT_RUNNER = "runner";
+    public static final String KEY_REPORT_RUNNER = "className";
     public static final String KEY_REPORT_CLASS = "className";
 
     /**

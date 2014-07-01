@@ -1,0 +1,64 @@
+{
+   "dev":[
+
+   ],
+   "dist":{
+      "runners":[
+         {
+            "className":"snapshot.runners.SnapshotRunner",
+            "out":"./snaps/",
+            "urls":[
+               "http://www.ronseal.info/"
+            ],
+            "dimensions":[
+               [
+                  1600,
+                  1200
+               ]
+            ],
+            "drivers":[
+               {
+                  "name":"firefox",
+                  "version":"",
+                  "hub":""
+               }
+            ],
+            "reports":[
+               {
+                  "className":"semblance.reporters.JunitReport",
+                  "out":"./reports/snapshot.junit"
+               }
+            ]
+         },
+         {
+            "className":"disparity.runners.DisparityRunner",
+            "in":"./screenshots2/",
+            "out":"./screenshots2/",
+            "fuzzyness":40,
+            "reports":[
+               {
+                  "className":"semblance.reporters.JunitReport",
+                  "out":"./reports/disparity.junit"
+               }
+            ]
+         },
+         {
+            "className":"affirmation.runners.AffirmationRunner",
+            "w3cServiceUrl":"http://validator.w3.org/check",
+            "urls":[
+               "http://ukoraway.hsbc.intranet/"
+            ],
+            "ignore":[
+               "Syntax of list of link-type keywords",
+               "Mistakes that can cause this error include"
+            ],
+            "reports":[
+               {
+                  "className":"semblance.reporters.JunitReport",
+                  "out":"./reports/affirmation.junit"
+               }
+            ]
+         }
+      ]
+   }
+}
