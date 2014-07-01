@@ -16,7 +16,6 @@
  */
 package semblance;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import java.util.logging.Logger;
 import semblance.data.MapHelper;
 import semblance.io.URLReader;
 import semblance.json.JSONParser;
+import semblance.reflection.ClassCreator;
 import semblance.results.IResult;
 import semblance.runners.Runner;
 
@@ -51,7 +51,7 @@ public class Semblance {
                     configUrlOrFilePath = args[argIndex + 1];
                 } else if (arg.equalsIgnoreCase("-act") || arg.equalsIgnoreCase("-action")) {
                     action = args[argIndex + 1];
-                } else if (arg.equalsIgnoreCase("-proxy")) {
+                } else if (arg.equalsIgnoreCase("-proxy") || arg.equalsIgnoreCase("-pr")) {
                     URLReader.setProxyDetails(args[argIndex + 1], Integer.valueOf(args[argIndex + 2]));
                 }
             }
@@ -68,45 +68,26 @@ public class Semblance {
      * @throws java.io.FileNotFoundException
      */
     public Semblance(String configUrlOrFilePath, String action) throws FileNotFoundException {
-        Logger.getLogger(Semblance.class.getName()).log(Level.INFO, String.format("Loading config '%s'", configUrlOrFilePath));
+        Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Loading json config '%s'", configUrlOrFilePath));
         JSONParser jParser = new JSONParser(configUrlOrFilePath);
         Map config = (Map<String, Object>) jParser.getJson();
-        Map actionData = (Map) MapHelper.getValue(config, action);
-        if (actionData instanceof Map) {
-            List<Map<String, Object>> actionRunners = (List<Map<String, Object>>) actionData.get("runners");
-            List<Map<String, Object>> actionReporters = (List<Map<String, Object>>) actionData.get("reporters");
-            for (Map singleActionData : actionRunners) {
-                String runnerClassName = (String) singleActionData.get("runner");
-                if (runnerClassName instanceof String) {
-                    callRunner(runnerClassName, singleActionData);
-                } else {
-                    Logger.getLogger(getClass().getName()).log(Level.WARNING, String.format("Each config Map requires a 'runner' key."));
-                }
+        Map actionMap = (Map) MapHelper.getValue(config, action);
+        List<Map> actionRunners = (List<Map>) MapHelper.getValue(actionMap, "runners", new ArrayList());
+        for (Map singleActionData : actionRunners) {
+            Runner runner = null;
+            String runnerClassName = (String) MapHelper.getValue(singleActionData, "runner", "");
+            if (runnerClassName.isEmpty()) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, String.format("Each action requires a 'runner' key."));
+            } else if (runnerClassName.startsWith("//")) {
+                Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Ignoring runner %s", runnerClassName));
+            } else {
+                ClassCreator definition = new ClassCreator<Runner>(runnerClassName);
+                Constructor<Runner> constructor = definition.getConstructor(Map.class);
+                runner = (Runner) definition.newInstance(constructor, singleActionData);
             }
-        }
-    }
-
-    /**
-     * Calls a single IRunner
-     *
-     * @param runnerClassName
-     * @param configData
-     * @return
-     */
-    private void callRunner(String runnerClassName, Map configData) {
-        if (!runnerClassName.startsWith("//")) {
-            try {
-                Class<Runner> runnerClass;
-                Constructor<Runner> runnerConstructor = null;
-                runnerClass = (Class<Runner>) Class.forName(runnerClassName);
-                runnerConstructor = runnerClass.getDeclaredConstructor(Map.class);
-                Runner runner = runnerConstructor.newInstance(configData);
-                runner.run();
+            if(runner != null) {
+                List<IResult> results = runner.run();
                 runner.report();
-            } catch (Exception ex) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Exception!", ex);
-            } catch (Error ex) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Semblance Runner Error!", ex);
             }
         }
     }

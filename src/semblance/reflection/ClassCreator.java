@@ -18,6 +18,7 @@
 package semblance.reflection;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +33,27 @@ public class ClassCreator<T> {
 
     public ClassCreator(String className) {
         this.className = className;
+    }
+    
+    /**
+     * Creates a new instance
+     * @param constructor
+     * @param params
+     * @return 
+     */
+    public T newInstance(Constructor<T> constructor, Object... params) {
+        try {
+            return constructor != null ? constructor.newInstance(params) : null;
+        } catch (InstantiationException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     /**
