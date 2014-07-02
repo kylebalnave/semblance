@@ -15,9 +15,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -45,6 +42,8 @@ public class MultipartURLWriter {
      * @param requestURL
      * @param charset
      * @throws IOException
+     * @throws java.security.NoSuchAlgorithmException
+     * @throws java.security.KeyManagementException
      */
     public MultipartURLWriter(String requestURL, String charset)
             throws IOException, NoSuchAlgorithmException, KeyManagementException {

@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,11 +82,13 @@ public class Semblance {
     public Semblance(String configUrlOrFilePath, String action) throws FileNotFoundException {
         //
         // load the JSON config
-        Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Loading json config '%s'", configUrlOrFilePath));
+        Logger.getLogger(getClass().getName()).info(String.format("Loading json config '%s'", configUrlOrFilePath));
         JSONParser jParser = new JSONParser(configUrlOrFilePath);
         Map config = (Map<String, Object>) jParser.getJson();
+        Logger.getLogger(getClass().getName()).info(String.format("Preparing action '%s'", action));
         Map actionMap = (Map) MapHelper.getValue(config, action);
         List<Map> actionRunners = (List<Map>) MapHelper.getValue(actionMap, KEY_REPORT_RUNNERS_LIST, new ArrayList());
+        Logger.getLogger(getClass().getName()).info(String.format("Preparing runners"));
         List<IResult> results = new ArrayList<IResult>();
         //
         // List all external plugin jars
@@ -98,7 +99,6 @@ public class Semblance {
         for (String jarPath : pluginDirs) {
             String pluginsPath = jarPath;
             Map<String, File> plugins = FileUtils.listFiles(pluginsPath);
-            List<URL> urlList = new ArrayList<URL>();
             for (File file : plugins.values()) {
                 if (file.getName().endsWith(".jar")) {
                     try {
@@ -113,14 +113,13 @@ public class Semblance {
         //
         // Create a run each 
         for (Map singleActionData : actionRunners) {
-            Runner runner = null;
             String runnerClassName = (String) MapHelper.getValue(singleActionData, KEY_REPORT_RUNNER, "");
             if (runnerClassName.isEmpty()) {
                 results.add(new ErrorResult(runnerClassName, String.format("Each action requires a '%s' key.", KEY_REPORT_RUNNER)));
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, String.format("Each action requires a '%s' key.", KEY_REPORT_RUNNER));
+                Logger.getLogger(getClass().getName()).warning(String.format("Each action requires a '%s' key.", KEY_REPORT_RUNNER));
             } else if (runnerClassName.startsWith("//")) {
                 results.add(new Result(runnerClassName, true, String.format("Ignoring Runner %s", runnerClassName)));
-                Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Ignoring Runner %s", runnerClassName));
+                Logger.getLogger(getClass().getName()).warning(String.format("Ignoring Runner %s", runnerClassName));
             } else {
                 results.addAll(callRunner(runnerClassName, singleActionData));
             }
@@ -134,29 +133,35 @@ public class Semblance {
     /**
      * Call a single Runner and return the Results
      *
-     * @param runnerClassName
+     * @param className
      * @param configMap
      * @return
      */
-    private List<IResult> callRunner(String runnerClassName, Map configMap) {
+    private List<IResult> callRunner(String className, Map configMap) {
         List<IResult> results = new ArrayList<IResult>();
-        ClassCreator definition = new ClassCreator<Runner>(runnerClassName);
+        ClassCreator definition = new ClassCreator<Runner>(className);
         Constructor<Runner> constructor = definition.getConstructor(Map.class);
-        Runner runner = (Runner) definition.newInstance(constructor, configMap);
-        //
-        // call the runner
-        if (runner != null) {
-            try {
-                Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Calling Runner '%s'", runnerClassName));
-                results.addAll(runner.run());
-                runner.report();
-            } catch (Exception ex) {
-                results.add(new ErrorResult(runnerClassName, "Uncaught Exception processing runner"));
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-            } catch (Error ex) {
-                results.add(new ErrorResult(runnerClassName, "Uncaught Error processing runner"));
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+        if (constructor != null) {
+            Runner runner = (Runner) definition.newInstance(constructor, configMap);
+            //
+            // call the runner
+            if (runner != null) {
+                try {
+                    Logger.getLogger(getClass().getName()).info(String.format("Calling Runner '%s'", className));
+                    results.addAll(runner.run());
+                    runner.report();
+                } catch (Exception ex) {
+                    results.add(new ErrorResult(className, "Uncaught Exception processing runner"));
+                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+                } catch (Error ex) {
+                    results.add(new ErrorResult(className, "Uncaught Error processing runner"));
+                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, String.format("Cannot create instance of '%s'.  Does a *.jar need to be included? And Does the constructor exist?", className));
             }
+        } else {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, String.format("Cannot find class constructor '%s'.  Does a *.jar need to be included?", className));
         }
         return results;
     }

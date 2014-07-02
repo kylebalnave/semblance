@@ -105,6 +105,7 @@ public class URLReader extends AbstractReader implements IReader {
          */
         TrustManager[] trustAllCerts = new TrustManager[]{
             new X509TrustManager() {
+                @Override
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                     return null;
                 }
@@ -126,6 +127,7 @@ public class URLReader extends AbstractReader implements IReader {
 
         // Create all-trusting host name verifier
         HostnameVerifier allHostsValid = new HostnameVerifier() {
+            @Override
             public boolean verify(String hostname, SSLSession session) {
                 return true;
             }
@@ -146,9 +148,9 @@ public class URLReader extends AbstractReader implements IReader {
             this.message = ioex.getMessage();
             this.source = "";
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(URLReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         } catch (KeyManagementException ex) {
-            Logger.getLogger(URLReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         }
         return this.source;
     }

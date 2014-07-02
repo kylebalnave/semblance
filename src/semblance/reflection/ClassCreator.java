@@ -77,14 +77,11 @@ public class ClassCreator<T> {
             throw new IOException("Error, could not add URL to system classloader");
         } catch (IllegalArgumentException t) {
             throw new IOException("Error, could not add URL to system classloader");
-        }
-        catch (NoSuchMethodException t) {
+        } catch (NoSuchMethodException t) {
             throw new IOException("Error, could not add URL to system classloader");
-        }
-        catch (SecurityException t) {
+        } catch (SecurityException t) {
             throw new IOException("Error, could not add URL to system classloader");
-        }
-        catch (InvocationTargetException t) {
+        } catch (InvocationTargetException t) {
             throw new IOException("Error, could not add URL to system classloader");
         }
     }

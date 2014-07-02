@@ -55,7 +55,7 @@ public abstract class AbstractReader implements IReader {
             }
             return sb.toString();
         } catch (IOException ex) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, String.format("Error reading '%s'", uri));
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, String.format("Error reading '%s'", uri));
             return "";
         }
     }

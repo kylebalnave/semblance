@@ -24,7 +24,7 @@ package semblance.io;
 public class ReaderFactory {
     
     public IReader getReader(String urlOrFilePath) {
-        IReader reader = null;
+        IReader reader;
         if(urlOrFilePath.startsWith("http://") || urlOrFilePath.startsWith("https://")) {
             reader = new URLReader(urlOrFilePath);
         } else {

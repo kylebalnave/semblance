@@ -36,7 +36,7 @@ import semblance.results.IResult;
  * @author balnave
  */
 public abstract class Runner {
-    
+
     public static final String KEY_REPORT_REPORTS = "reports";
     public static final String KEY_REPORT_OUT = "out";
     public static final String KEY_REPORT_CLASS = "className";
@@ -60,7 +60,7 @@ public abstract class Runner {
      * @param pathToJson
      */
     public Runner(String pathToJson) {
-        if(!pathToJson.isEmpty()) {
+        if (!pathToJson.isEmpty()) {
             Logger.getLogger(getClass().getName()).info(String.format("Loading config '%s'", pathToJson));
             JSONParser jParser = new JSONParser(pathToJson);
             config = (Map<String, Object>) jParser.getJson();
@@ -69,7 +69,6 @@ public abstract class Runner {
             config = new HashMap();
         }
     }
-    
 
     /**
      * Calls the Runner to begin
@@ -96,11 +95,15 @@ public abstract class Runner {
                         reportDir.mkdirs();
                         ClassCreator<Report> cLoader = new ClassCreator<Report>(className);
                         Constructor<Report> constructor = cLoader.getConstructor(List.class);
-                        Report report = cLoader.newInstance(constructor, results);
-                        if (report != null) {
-                            report.out(out);
+                        if (constructor != null) {
+                            Report report = cLoader.newInstance(constructor, results);
+                            if (report != null) {
+                                report.out(out);
+                            } else {
+                                Logger.getLogger(getClass().getName()).warning(String.format("Cannot find Report instance for Class %s", className));
+                            }
                         } else {
-                            Logger.getLogger(getClass().getName()).warning(String.format("Cannot find Report Class %s", className));
+                            Logger.getLogger(getClass().getName()).warning(String.format("Cannot find Report constructor for %s", className));
                         }
                     }
                 }

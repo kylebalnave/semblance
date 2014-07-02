@@ -24,7 +24,6 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 import semblance.io.IReader;
 import semblance.io.ReaderFactory;
-import semblance.runners.Runner;
 
 /**
  * Loads a JSON JSONParser { urls: [String, String], dir : String }
@@ -44,10 +43,10 @@ public class JSONParser {
             try {
                 json = (Map<String, Object>) JSONValue.parseWithException(source);
             } catch (ParseException ex) {
-                Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, "Exception loading JSON config", ex);
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Exception loading JSON config", ex);
             }
         } else {
-            Logger.getLogger(Runner.class.getName()).severe(String.format("Unable to load JSON config %s", pathToJson));
+            Logger.getLogger(getClass().getName()).severe(String.format("Unable to load JSON config %s", pathToJson));
         }
     }
 
