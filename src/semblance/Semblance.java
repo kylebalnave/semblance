@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import semblance.args.ArgsHelper;
 import semblance.data.MapHelper;
 import semblance.io.FileUtils;
 import semblance.io.URLReader;
@@ -35,7 +36,6 @@ import semblance.reporters.SystemLogReport;
 import semblance.results.ErrorResult;
 import semblance.results.IResult;
 import semblance.results.PassResult;
-import semblance.results.Result;
 import semblance.runners.Runner;
 
 /**
@@ -55,20 +55,12 @@ public class Semblance {
      * @throws java.io.FileNotFoundException
      */
     public static void main(String[] args) throws FileNotFoundException {
-        String configUrlOrFilePath = "./config.json";
-        String action = "dist";
-        int argIndex = 0;
-        for (String arg : args) {
-            if (args.length >= argIndex + 1) {
-                if (arg.equalsIgnoreCase("-cf") || arg.equalsIgnoreCase("-config")) {
-                    configUrlOrFilePath = args[argIndex + 1];
-                } else if (arg.equalsIgnoreCase("-act") || arg.equalsIgnoreCase("-action")) {
-                    action = args[argIndex + 1];
-                } else if (arg.equalsIgnoreCase("-proxy") || arg.equalsIgnoreCase("-pr")) {
-                    URLReader.setProxyDetails(args[argIndex + 1], Integer.valueOf(args[argIndex + 2]));
-                }
-            }
-            argIndex++;
+        String configUrlOrFilePath = ArgsHelper.getFirstArgMatching(args, new String[]{"-cf", "-config"}, "./config.json");
+        String action = ArgsHelper.getFirstArgMatching(args, new String[]{"-act", "-action"}, "dist");
+        String proxy = ArgsHelper.getArgMatching(args, "proxy", "");
+        String[] proxyParts = proxy.split(":");
+        if(proxyParts.length == 2) {
+            URLReader.setProxyDetails(proxyParts[0], Integer.valueOf(proxyParts[1]));
         }
         Semblance semblance = new Semblance(configUrlOrFilePath, action);
     }
