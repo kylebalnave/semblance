@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import semblance.results.ErrorResult;
+import semblance.results.FailResult;
 import semblance.results.IResult;
 
 /**
@@ -68,7 +70,7 @@ public abstract class Report {
     public List<IResult> getFailureResults() {
         List<IResult> failures = new ArrayList<IResult>();
         for (IResult result : results) {
-            if (result.hasFailed()) {
+            if (isFailResult(result)) {
                 failures.add(result);
             }
         }
@@ -83,10 +85,8 @@ public abstract class Report {
     public List<IResult> getErrorResults() {
         List<IResult> errors = new ArrayList<IResult>();
         for (IResult result : results) {
-            if (result != null) {
-                if (result.hasError()) {
-                    errors.add(result);
-                }
+            if (result != null && isErrorResult(result)) {
+                errors.add(result);
             }
         }
         return errors;
@@ -168,5 +168,25 @@ public abstract class Report {
      * @return
      */
     protected abstract Object doForEachErrorResult(IResult result);
+
+    /**
+     * Detect result type
+     *
+     * @param result
+     * @return
+     */
+    protected boolean isErrorResult(IResult result) {
+        return result instanceof ErrorResult;
+    }
+
+    /**
+     * Detect result type
+     *
+     * @param result
+     * @return
+     */
+    protected boolean isFailResult(IResult result) {
+        return result instanceof FailResult;
+    }
 
 }

@@ -34,6 +34,7 @@ import semblance.reporters.Report;
 import semblance.reporters.SystemLogReport;
 import semblance.results.ErrorResult;
 import semblance.results.IResult;
+import semblance.results.PassResult;
 import semblance.results.Result;
 import semblance.runners.Runner;
 
@@ -118,7 +119,7 @@ public class Semblance {
                 results.add(new ErrorResult(runnerClassName, String.format("Each action requires a '%s' key.", KEY_REPORT_RUNNER)));
                 Logger.getLogger(getClass().getName()).warning(String.format("Each action requires a '%s' key.", KEY_REPORT_RUNNER));
             } else if (runnerClassName.startsWith("//")) {
-                results.add(new Result(runnerClassName, true, String.format("Ignoring Runner %s", runnerClassName)));
+                results.add(new PassResult(runnerClassName, String.format("Ignoring Runner %s", runnerClassName)));
                 Logger.getLogger(getClass().getName()).warning(String.format("Ignoring Runner %s", runnerClassName));
             } else {
                 results.addAll(callRunner(runnerClassName, singleActionData));

@@ -93,9 +93,9 @@ public class XmlReport extends Report {
     protected Document buildResultDoc() {
         Element site = doForEachResultList(results);
         for (IResult result : results) {
-            if (result.hasError()) {
+            if (isErrorResult(result)) {
                 site.appendChild(doForEachErrorResult(result));
-            } else if (result.hasFailed()) {
+            } else if (isFailResult(result)) {
                 site.appendChild(doForEachFailedResult(result));
             } else {
                 site.appendChild(doForEachPassedResult(result));

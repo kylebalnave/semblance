@@ -63,21 +63,6 @@ public class Result implements IResult {
     }
 
     @Override
-    public boolean hasPassed() {
-        return pass;
-    }
-
-    @Override
-    public boolean hasFailed() {
-        return !pass;
-    }
-
-    @Override
-    public boolean hasError() {
-        return this instanceof ErrorResult;
-    }
-
-    @Override
     public String getName() {
         return uri;
     }
@@ -89,18 +74,12 @@ public class Result implements IResult {
 
     @Override
     public String getMessage() {
-        if (message instanceof String) {
-            return message.replaceAll("\\s+", " ");
-        }
-        return "";
+        return removeMultipleSpaces(message);
     }
 
     @Override
     public String getReason() {
-        if (reason instanceof String) {
-            return reason.replaceAll("\\s+", " ");
-        }
-        return "";
+        return removeMultipleSpaces(reason);
     }
 
     @Override
@@ -116,6 +95,13 @@ public class Result implements IResult {
     @Override
     public long getExecutionTimeMs() {
         return executionTimeMs;
+    }
+    
+    protected String removeMultipleSpaces(String input) {
+        if (input instanceof String) {
+            return input.replaceAll("\\s+", " ");
+        }
+        return "";
     }
 
 }

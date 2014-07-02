@@ -23,14 +23,29 @@ package semblance.io;
  */
 public class ReaderFactory {
     
-    public IReader getReader(String urlOrFilePath) {
+    /**
+     * Creates an appropriate IReader
+     * @param urlOrFilePath
+     * @return
+     */
+    public static IReader getReader(String urlOrFilePath) {
         IReader reader;
-        if(urlOrFilePath.startsWith("http://") || urlOrFilePath.startsWith("https://")) {
+        if(startsWithHttpOrHttps(urlOrFilePath)) {
             reader = new URLReader(urlOrFilePath);
         } else {
             reader = new LocalFileReader(urlOrFilePath);
         }
         return reader;
+    }
+    
+    /**
+     * Internal used to detect URLs
+     * @param urlOrFilePath
+     * @return 
+     */
+    private static boolean startsWithHttpOrHttps(String urlOrFilePath) {
+        urlOrFilePath = urlOrFilePath.toLowerCase();
+        return urlOrFilePath.startsWith("http://") || urlOrFilePath.startsWith("https://");
     }
     
 }

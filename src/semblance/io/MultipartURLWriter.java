@@ -29,7 +29,7 @@ import java.security.NoSuchAlgorithmException;
 public class MultipartURLWriter {
 
     private final String boundary;
-    private static final String LINE_FEED = "\r\n";
+    private final String LINE_FEED = "\r\n";
     private final HttpURLConnection httpConn;
     private final String charset;
     private final OutputStream outputStream;
@@ -56,9 +56,8 @@ public class MultipartURLWriter {
         httpConn.setUseCaches(false);
         httpConn.setDoOutput(true); // indicates POST method
         httpConn.setDoInput(true);
-        httpConn.setRequestProperty("Content-Type",
-                "multipart/form-data; boundary=" + boundary);
-        httpConn.setRequestProperty("User-Agent", "CodeJava Agent");
+        httpConn.setRequestProperty("Content-Type","multipart/form-data; boundary=" + boundary);
+        httpConn.setRequestProperty("User-Agent", "URLConnection Agent");
         httpConn.setRequestProperty("Test", "Bonjour");
         outputStream = httpConn.getOutputStream();
         writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
@@ -176,7 +175,8 @@ public class MultipartURLWriter {
      * OK, otherwise an exception is thrown.
      * @throws IOException
      */
-    public String finish() throws IOException {
+    public String sendAndReceive() throws IOException {
+        String responseStr = "";
         StringBuilder response = new StringBuilder();
 
         writer.append(LINE_FEED).flush();
@@ -194,11 +194,12 @@ public class MultipartURLWriter {
             }
             reader.close();
             httpConn.disconnect();
+            responseStr = stripNonValidXMLCharacters(response.toString());
         } else {
             throw new IOException("Server returned non-OK status: " + status);
         }
 
-        return stripNonValidXMLCharacters(response.toString());
+        return responseStr;
     }
 
     /**
@@ -212,7 +213,7 @@ public class MultipartURLWriter {
      * @param in The String whose non-valid characters we want to remove.
      * @return The in String, stripped of non-valid characters.
      */
-    public String stripNonValidXMLCharacters(String in) {
+    private String stripNonValidXMLCharacters(String in) {
         StringBuilder out = new StringBuilder(); // Used to hold the output.
         char current; // Used to reference the current character.
 

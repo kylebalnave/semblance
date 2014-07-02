@@ -32,12 +32,11 @@ import semblance.io.ReaderFactory;
  */
 public class JSONParser {
 
-    private final ReaderFactory rf = new ReaderFactory();
     private Object json;
 
     public JSONParser(String pathToJson) {
         this.json = null;
-        IReader reader = rf.getReader(pathToJson);
+        IReader reader = ReaderFactory.getReader(pathToJson);
         String source = reader.load();
         if (!source.isEmpty()) {
             try {

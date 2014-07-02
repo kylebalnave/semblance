@@ -68,10 +68,10 @@ public class SystemLogReport extends Report {
         StringBuilder sb = new StringBuilder();
         sb.append(this.doForEachResultList(results));
         for (IResult result : results) {
-            if (result.hasError()) {
+            if (isErrorResult(result)) {
                 sb.append(this.doForEachErrorResult(result));
                 sb.append("=============\n");
-            } else if (result.hasFailed()) {
+            } else if (isFailResult(result)) {
                 sb.append(this.doForEachFailedResult(result));
                 sb.append("=============\n");
             } else {

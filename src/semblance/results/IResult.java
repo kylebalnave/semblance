@@ -20,10 +20,4 @@ public interface IResult {
      
     public long getExecutionTimeMs();
     
-    public boolean hasPassed();
-
-    public boolean hasFailed();
-    
-    public boolean hasError();
-
 }

@@ -61,8 +61,8 @@ public class JunitReport extends XmlReport {
         element.setAttribute("name", result.getName());
         element.setAttribute("tests", "1");
         element.setAttribute("assertions", "1");
-        element.setAttribute("failures", result.hasFailed()? "1" : "0");
-        element.setAttribute("errors", result.hasError()? "1" : "0");
+        element.setAttribute("failures", isFailResult(result) ? "1" : "0");
+        element.setAttribute("errors", isErrorResult(result) ? "1" : "0");
         element.setAttribute("time", String.valueOf(result.getExecutionTimeMs()));
         return element;
     }
