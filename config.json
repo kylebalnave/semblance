@@ -10,7 +10,7 @@
    "dist":{
       "runners":[
          {
-            "className":"snapshot.runners.ScreenshotRunner",
+            "className":"snapshot.runners.SnapshotRunner",
             "out":"./snaps/",
             "urls":[
                "http://www.ronseal.info/"

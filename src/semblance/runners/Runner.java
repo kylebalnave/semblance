@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import semblance.args.ArgsHelper;
@@ -38,7 +39,7 @@ import semblance.results.IResult;
  *
  * @author balnave
  */
-public abstract class Runner {
+public abstract class Runner implements Callable<List<IResult>> {
 
     public static final String KEY_REPORT_REPORTS = "reports";
     public static final String KEY_REPORT_OUT = "out";
@@ -63,7 +64,7 @@ public abstract class Runner {
         try {
             Constructor constructor = classToCreate.getConstructor(String.class);
             runner = (Runner) constructor.newInstance(configPath);
-            List<IResult> results = runner.run();
+            List<IResult> results = runner.call();
             runner.report();
             //
             // log the summary of all results
@@ -100,14 +101,6 @@ public abstract class Runner {
         }
     }
 
-    /**
-     * Calls the Runner to begin
-     *
-     * @return
-     * @throws Exception
-     * @throws Error
-     */
-    public abstract List<IResult> run() throws Exception, Error;
 
     /**
      * Outputs reports

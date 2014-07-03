@@ -57,7 +57,7 @@ public class Semblance {
         String groupName = ArgsHelper.getFirstArgMatching(args, new String[]{"-act", "-action"}, "dist");
         String proxyDetails = ArgsHelper.getArgMatching(args, "proxy", "");
         String[] proxyParts = proxyDetails.split(":");
-        if(proxyParts.length == 2) {
+        if (proxyParts.length == 2) {
             URLReader.setProxyDetails(proxyParts[0], Integer.valueOf(proxyParts[1]));
         }
         Semblance semblance = new Semblance(configPath, groupName);
@@ -129,7 +129,7 @@ public class Semblance {
      */
     private List<IResult> callRunner(String className, Map configMap) {
         List<IResult> results = new ArrayList<IResult>();
-        ClassCreator definition = new ClassCreator<Runner>(className);
+        ClassCreator definition = new ClassCreator(className);
         Constructor<Runner> constructor = definition.getConstructor(Map.class);
         if (constructor != null) {
             Runner runner = (Runner) definition.newInstance(constructor, configMap);
@@ -138,7 +138,7 @@ public class Semblance {
             if (runner != null) {
                 try {
                     Logger.getLogger(getClass().getName()).info(String.format("Calling Runner '%s'", className));
-                    results.addAll(runner.run());
+                    results.addAll(runner.call());
                     runner.report();
                 } catch (Exception ex) {
                     results.add(new ErrorResult(className, "Uncaught Exception processing runner"));
@@ -148,10 +148,14 @@ public class Semblance {
                     Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, String.format("Cannot create instance of '%s'.  Does a *.jar need to be included? And Does the constructor exist?", className));
+                String msg = String.format("Cannot create instance of '%s'.  Does a *.jar need to be included? And Does the constructor exist?", className);
+                results.add(new ErrorResult(className, msg));
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, msg);
             }
         } else {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, String.format("Cannot find class constructor '%s'.  Does a *.jar need to be included?", className));
+            String msg = String.format("Cannot find class constructor '%s'.  Does a *.jar need to be included?", className);
+            results.add(new ErrorResult(className, msg));
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, msg);
         }
         return results;
     }

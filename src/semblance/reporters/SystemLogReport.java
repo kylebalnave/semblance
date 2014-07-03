@@ -78,7 +78,8 @@ public class SystemLogReport extends Report {
                 Logger.getAnonymousLogger().log(Level.INFO, this.doForEachPassedResult(result));
             }
         }
-        Logger.getAnonymousLogger().log(Level.INFO, sb.toString());
+        sb.append(this.doForEachResultList(results));
+        Logger.getLogger(getClass().getName()).log(Level.INFO, sb.toString());
     }
 
     @Override
