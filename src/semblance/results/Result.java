@@ -98,10 +98,11 @@ public class Result implements IResult {
     }
     
     protected String removeMultipleSpaces(String input) {
+        String result = "";
         if (input instanceof String) {
-            return input.replaceAll("\\s+", " ");
+            result = input.replaceAll("\\s+", " ");
         }
-        return "";
+        return result;
     }
 
 }

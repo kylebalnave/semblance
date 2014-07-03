@@ -35,15 +35,14 @@ public class FileUtils {
      * @return
      */
     public static Map<String, File> listFiles(String path) {
-        File root = new File(path);
-        if(!root.exists()) {
-            return new HashMap<String, File>();
-        }
-        File[] list = root.listFiles();
         Map<String, File> matched = new HashMap<String, File>();
-        for (File f : list) {
-            if (f.isFile()) {
-                matched.put(f.getName(), f);
+        File root = new File(path);
+        if (root.exists()) {
+            File[] list = root.listFiles();
+            for (File f : list) {
+                if (f.isFile()) {
+                    matched.put(f.getName(), f);
+                }
             }
         }
         return matched;
@@ -69,7 +68,7 @@ public class FileUtils {
         }
         return matched;
     }
-    
+
     public static List<File> listFolders(File path) {
         return listFolders(path.getAbsolutePath());
     }

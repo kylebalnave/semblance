@@ -31,10 +31,11 @@ public class MapHelper {
     }
     
     public static Object getValue(Map<String, Object> sourceMap, String key, Object defaultValue) {
+        Object result = defaultValue;
         if (sourceMap != null && sourceMap.containsKey(key)) {
-            return sourceMap.get(key);
+            result = sourceMap.get(key);
         }
-        return defaultValue;
+        return result;
     }
     
 }

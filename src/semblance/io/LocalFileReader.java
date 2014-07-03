@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package semblance.io;
 
 import java.io.File;
@@ -26,7 +25,7 @@ import java.io.FileNotFoundException;
  * @author balnave
  */
 public class LocalFileReader extends AbstractReader implements IReader {
-    
+
     private String message;
 
     public LocalFileReader(String uri) {
@@ -36,16 +35,17 @@ public class LocalFileReader extends AbstractReader implements IReader {
     public String getMessage() {
         return message;
     }
-    
+
     @Override
     public String load() {
+        String result = "";
         try {
             FileInputStream fis = new FileInputStream(new File(uri));
-            return readInputStream(fis);
+            result = readInputStream(fis);
         } catch (FileNotFoundException ex) {
             this.message = ex.getMessage();
-            return "";
         }
+        return result;
     }
-    
+
 }

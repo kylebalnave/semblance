@@ -16,6 +16,8 @@
  */
 package semblance.reporters;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,6 +67,31 @@ public class SystemLogReport extends Report {
 
     @Override
     public void out() {
+        Logger.getLogger(getClass().getName()).log(Level.INFO, buildOut());
+    }
+
+    @Override
+    public boolean out(String fileOut) {
+        PrintWriter out = null;
+        try {
+            out = new PrintWriter(fileOut);
+            out.print(buildOut());
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, null, ex);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Builds the out String
+     *
+     * @return
+     */
+    private String buildOut() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.doForEachResultList(results));
         for (IResult result : results) {
@@ -79,13 +106,7 @@ public class SystemLogReport extends Report {
             }
         }
         sb.append(this.doForEachResultList(results));
-        Logger.getLogger(getClass().getName()).log(Level.INFO, sb.toString());
-    }
-
-    @Override
-    public boolean out(String fileOut) {
-        out();
-        return false;
+        return sb.toString();
     }
 
 }
