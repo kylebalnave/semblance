@@ -100,7 +100,7 @@ public class HtmlReport extends Report {
         sb.append(String.format("<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" />", "http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"));
         sb.append("</head>");
         sb.append("<body>");
-        sb.append("<div class=\"center-block\">");
+        sb.append("<div class=\"center-block\" style=\"max-width:800px;\">");
         sb.append("<p class=\"bg-info\">%s</p>");
         sb.append("<ul class=\"bg-danger\">%s");
         sb.append("</ul>");
