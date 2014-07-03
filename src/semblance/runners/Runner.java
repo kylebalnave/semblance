@@ -31,7 +31,7 @@ import semblance.io.URLReader;
 import semblance.json.JSONParser;
 import semblance.reflection.ClassCreator;
 import semblance.reporters.Report;
-import semblance.reporters.SystemLogReport;
+import semblance.reporters.TextReport;
 import semblance.results.IResult;
 
 /**
@@ -68,7 +68,7 @@ public abstract class Runner implements Callable<List<IResult>> {
             runner.report();
             //
             // log the summary of all results
-            Report report = new SystemLogReport(results);
+            Report report = new TextReport(results);
             report.out();
         } catch (Exception ex) {
             Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);

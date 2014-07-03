@@ -11,9 +11,9 @@
       "runners":[
          {
             "className":"snapshot.runners.SnapshotRunner",
-            "out":"./snaps/",
+            "out":"./test/snaps/",
             "urls":[
-               "http://www.ronseal.info/"
+               "http://www.yahoo.com/"
             ],
             "dimensions":[
                [
@@ -31,19 +31,19 @@
             "reports":[
                {
                   "className":"semblance.reporters.JunitReport",
-                  "out":"./reports/snapshot.junit"
+                  "out":"./test/reports/snapshot.junit"
                }
             ]
          },
          {
             "className":"disparity.runners.DisparityRunner",
-            "in":"./snaps/",
-            "out":"./snaps/",
-            "fuzzyness":40,
+            "in":"./test/snaps/",
+            "out":"./test/snaps/",
+            "fuzzyness":10,
             "reports":[
                {
                   "className":"semblance.reporters.JunitReport",
-                  "out":"./reports/disparity.junit"
+                  "out":"./test/reports/disparity.junit"
                }
             ]
          },
@@ -51,7 +51,7 @@
             "className":"affirmation.runners.AffirmationRunner",
             "w3cServiceUrl":"http://validator.w3.org/check",
             "urls":[
-               "http://ukoraway.hsbc.intranet/"
+               "http://www.yahoo.com/"
             ],
             "ignore":[
                "Syntax of list of link-type keywords",
@@ -60,7 +60,19 @@
             "reports":[
                {
                   "className":"semblance.reporters.JunitReport",
-                  "out":"./reports/affirmation.junit"
+                  "out":"./test/reports/affirmation.junit"
+               },
+               {
+                  "className":"semblance.reporters.XmlReport",
+                  "out":"./test/reports/affirmation.xml"
+               },
+               {
+                  "className":"semblance.reporters.HtmlReport",
+                  "out":"./test/reports/affirmation.html"
+               },
+               {
+                  "className":"semblance.reporters.TextReport",
+                  "out":"./test/reports/affirmation.txt"
                }
             ]
          }

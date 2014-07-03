@@ -31,7 +31,7 @@ import semblance.io.URLReader;
 import semblance.json.JSONParser;
 import semblance.reflection.ClassCreator;
 import semblance.reporters.Report;
-import semblance.reporters.SystemLogReport;
+import semblance.reporters.TextReport;
 import semblance.results.ErrorResult;
 import semblance.results.IResult;
 import semblance.results.PassResult;
@@ -116,7 +116,7 @@ public class Semblance {
         }
         //
         // log the summary of all results
-        Report report = new SystemLogReport(results);
+        Report report = new TextReport(results);
         report.out();
     }
 
