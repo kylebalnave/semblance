@@ -17,7 +17,6 @@
 package semblance;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -52,17 +51,16 @@ public class Semblance {
 
     /**
      * @param args the command line arguments
-     * @throws java.io.FileNotFoundException
      */
-    public static void main(String[] args) throws FileNotFoundException {
-        String configUrlOrFilePath = ArgsHelper.getFirstArgMatching(args, new String[]{"-cf", "-config"}, "./config.json");
-        String action = ArgsHelper.getFirstArgMatching(args, new String[]{"-act", "-action"}, "dist");
-        String proxy = ArgsHelper.getArgMatching(args, "proxy", "");
-        String[] proxyParts = proxy.split(":");
+    public static void main(String[] args) {
+        String configPath = ArgsHelper.getFirstArgMatching(args, new String[]{"-cf", "-config"}, "./config.json");
+        String groupName = ArgsHelper.getFirstArgMatching(args, new String[]{"-act", "-action"}, "dist");
+        String proxyDetails = ArgsHelper.getArgMatching(args, "proxy", "");
+        String[] proxyParts = proxyDetails.split(":");
         if(proxyParts.length == 2) {
             URLReader.setProxyDetails(proxyParts[0], Integer.valueOf(proxyParts[1]));
         }
-        Semblance semblance = new Semblance(configUrlOrFilePath, action);
+        Semblance semblance = new Semblance(configPath, groupName);
     }
 
     /**
@@ -70,9 +68,8 @@ public class Semblance {
      *
      * @param configUrlOrFilePath
      * @param action
-     * @throws java.io.FileNotFoundException
      */
-    public Semblance(String configUrlOrFilePath, String action) throws FileNotFoundException {
+    public Semblance(String configUrlOrFilePath, String action) {
         //
         // load the JSON config
         Logger.getLogger(getClass().getName()).info(String.format("Loading json config '%s'", configUrlOrFilePath));

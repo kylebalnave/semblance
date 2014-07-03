@@ -24,10 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import semblance.args.ArgsHelper;
 import semblance.data.MapHelper;
+import semblance.io.URLReader;
 import semblance.json.JSONParser;
 import semblance.reflection.ClassCreator;
 import semblance.reporters.Report;
+import semblance.reporters.SystemLogReport;
 import semblance.results.IResult;
 
 /**
@@ -43,6 +46,33 @@ public abstract class Runner {
 
     protected List<IResult> results = new ArrayList<IResult>();
     protected Map<String, Object> config;
+    
+    /**
+     * Helper to create a Runner from a main
+     * @param classToCreate
+     * @param args 
+     */
+    public static void callRunnerSequence(Class classToCreate, String[] args) {
+        String configPath = ArgsHelper.getFirstArgMatching(args, new String[]{"-cf", "-config"}, "./config.json");
+        String proxyDetails = ArgsHelper.getArgMatching(args, "proxy", "");
+        String[] proxyParts = proxyDetails.split(":");
+        if(proxyParts.length == 2) {
+            URLReader.setProxyDetails(proxyParts[0], Integer.valueOf(proxyParts[1]));
+        }
+        Runner runner;
+        try {
+            Constructor constructor = classToCreate.getConstructor(String.class);
+            runner = (Runner) constructor.newInstance(configPath);
+            List<IResult> results = runner.run();
+            runner.report();
+            //
+            // log the summary of all results
+            Report report = new SystemLogReport(results);
+            report.out();
+        } catch (Exception ex) {
+            Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * Initialiser with config data
