@@ -28,16 +28,16 @@ import java.util.logging.Logger;
  * @author balnave
  */
 public abstract class AbstractReader implements IReader {
-    
+
     protected String uri;
-    
+
     public AbstractReader(String uri) {
         this.uri = uri;
     }
 
     @Override
     public abstract String load();
-    
+
     /**
      * Reads an input stream
      *
@@ -45,6 +45,7 @@ public abstract class AbstractReader implements IReader {
      * @return Contents/Empty String
      */
     protected final String readInputStream(InputStream stream) {
+        String result = "";
         try {
             StringBuilder sb = new StringBuilder();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
@@ -53,11 +54,11 @@ public abstract class AbstractReader implements IReader {
                 sb.append(line);
                 sb.append("\n");
             }
-            return sb.toString();
+            result = sb.toString();
         } catch (IOException ex) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, String.format("Error reading '%s'", uri));
-            return "";
         }
+        return result;
     }
 
 }

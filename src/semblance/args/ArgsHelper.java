@@ -76,6 +76,7 @@ public class ArgsHelper {
      * Gets an arg matching with default fallback
      * @param args
      * @param flagName
+     * @param defaultValue
      * @return 
      */
     public static String getArgMatching(String[] args, String flagName, String defaultValue) {

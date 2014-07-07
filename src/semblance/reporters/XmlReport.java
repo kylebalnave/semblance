@@ -63,7 +63,7 @@ public class XmlReport extends Report {
 
     @Override
     public void out() {
-        new SystemLogReport(results).out();
+        new TextReport(results).out();
     }
 
     @Override

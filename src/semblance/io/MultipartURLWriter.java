@@ -56,7 +56,7 @@ public class MultipartURLWriter {
         httpConn.setUseCaches(false);
         httpConn.setDoOutput(true); // indicates POST method
         httpConn.setDoInput(true);
-        httpConn.setRequestProperty("Content-Type","multipart/form-data; boundary=" + boundary);
+        httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
         httpConn.setRequestProperty("User-Agent", "URLConnection Agent");
         httpConn.setRequestProperty("Test", "Bonjour");
         outputStream = httpConn.getOutputStream();
@@ -144,7 +144,6 @@ public class MultipartURLWriter {
         InputStream inputStream = new ByteArrayInputStream(fileSource.getBytes());
 
         // read it with BufferedReader
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         byte[] buffer = new byte[4096];
         int bytesRead;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -214,23 +213,23 @@ public class MultipartURLWriter {
      * @return The in String, stripped of non-valid characters.
      */
     private String stripNonValidXMLCharacters(String in) {
-        StringBuilder out = new StringBuilder(); // Used to hold the output.
-        char current; // Used to reference the current character.
-
-        if (in == null || ("".equals(in))) {
-            return ""; // vacancy test.
-        }
-        for (int i = 0; i < in.length(); i++) {
-            current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
-            if ((current == 0x9)
-                    || (current == 0xA)
-                    || (current == 0xD)
-                    || ((current >= 0x20) && (current <= 0xD7FF))
-                    || ((current >= 0xE000) && (current <= 0xFFFD))
-                    || ((current >= 0x10000) && (current <= 0x10FFFF))) {
-                out.append(current);
+        String result = "";
+        if (in != null && !in.isEmpty()) {
+            StringBuilder out = new StringBuilder(); // Used to hold the output.
+            char current; // Used to reference the current character.
+            for (int i = 0; i < in.length(); i++) {
+                current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
+                if ((current == 0x9)
+                        || (current == 0xA)
+                        || (current == 0xD)
+                        || ((current >= 0x20) && (current <= 0xD7FF))
+                        || ((current >= 0xE000) && (current <= 0xFFFD))
+                        || ((current >= 0x10000) && (current <= 0x10FFFF))) {
+                    out.append(current);
+                }
             }
+            result = out.toString();
         }
-        return out.toString();
+        return result;
     }
 }
