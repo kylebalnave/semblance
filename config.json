@@ -13,7 +13,7 @@
             "className":"snapshot.runners.SnapshotRunner",
             "out":"./snaps/",
             "urls":[
-               "http://www.ronseal.info/"
+               "http://www.bbc.co.uk/"
             ],
             "dimensions":[
                [
@@ -23,7 +23,7 @@
             ],
             "drivers":[
                {
-                  "name":"phantomjs",
+                  "name":"firefox",
                   "version":"",
                   "hub":""
                }
@@ -51,7 +51,7 @@
             "className":"affirmation.runners.AffirmationRunner",
             "w3cServiceUrl":"http://validator.w3.org/check",
             "urls":[
-               "http://ukoraway.hsbc.intranet/"
+               "http://www.bbc.co.uk/"
             ],
             "ignore":[
                "Syntax of list of link-type keywords",

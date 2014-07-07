@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testsuites errors="0" failures="0" name="suite-results" tests="1" time="6929" timestamp="2014/07/03T3:57:34">
-  <testsuite id="1" name="suite-results">
-    <testcase assertions="1" errors="0" failures="0" name="C:\Users\kyleb2\Documents\GitHub\semblance\.\snaps\2014-07-03 15-57-27\.\phantomjs-1600px-httpwwwronsealinfo.jpg" tests="1" time="6929"/>
-  </testsuite>
-</testsuites>
