@@ -44,25 +44,44 @@ public class HtmlReport extends Report {
 
     @Override
     protected String doForEachPassedResult(IResult result) {
-        return String.format("<li><p class=\"text-success\">%s</p><p class=\"text-info\">%s</p></li>",
-                result.getName(),
-                result.getMessage());
+        StringBuilder sb = new StringBuilder();
+        sb.append("<tr class=\"success\">");
+        sb.append("<td></td>");
+        sb.append("<td>" + result.getName() + "</td>");
+        sb.append("<td>" + result.getMessage() + "</td>");
+        sb.append("<td>" + result.getReason()+ "</td>");
+        sb.append("<td>" + result.getLine()+ "</td>");
+        sb.append("<td>" + result.getParagraph()+ "</td>");
+        sb.append("</tr>");
+        return sb.toString();
     }
 
     @Override
     protected String doForEachFailedResult(IResult result) {
-        return String.format("<li><p class=\"text-danger\">%s</p><p class=\"text-info\">%s</p><pre>%s</pre></li>",
-                result.getName(),
-                result.getReason(),
-                result.getMessage());
+        StringBuilder sb = new StringBuilder();
+        sb.append("<tr class=\"warning\">");
+        sb.append("<td></td>");
+        sb.append("<td>" + result.getName() + "</td>");
+        sb.append("<td>" + result.getMessage() + "</td>");
+        sb.append("<td>" + result.getReason()+ "</td>");
+        sb.append("<td>" + result.getLine()+ "</td>");
+        sb.append("<td>" + result.getParagraph()+ "</td>");
+        sb.append("</tr>");
+        return sb.toString();
     }
 
     @Override
     protected String doForEachErrorResult(IResult result) {
-        return String.format("<li><p class=\"text-danger\">%s</p><p class=\"text-info\">%s</p><pre>%s</pre></li>",
-                result.getName(),
-                result.getReason(),
-                result.getMessage());
+        StringBuilder sb = new StringBuilder();
+        sb.append("<tr class=\"danger\">");
+        sb.append("<td></td>");
+        sb.append("<td>" + result.getName() + "</td>");
+        sb.append("<td>" + result.getMessage() + "</td>");
+        sb.append("<td>" + result.getReason()+ "</td>");
+        sb.append("<td>" + result.getLine()+ "</td>");
+        sb.append("<td>" + result.getParagraph()+ "</td>");
+        sb.append("</tr>");
+        return sb.toString();
     }
 
     @Override
@@ -100,14 +119,25 @@ public class HtmlReport extends Report {
         sb.append(String.format("<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" />", "http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"));
         sb.append("</head>");
         sb.append("<body>");
-        sb.append("<div class=\"center-block\" style=\"max-width:800px;\">");
+        sb.append("<div class=\"center-block\" style=\"max-width:800px;margin-top:50px;\">");
         sb.append("<p class=\"bg-info\">%s</p>");
-        sb.append("<ul class=\"bg-danger\">%s");
-        sb.append("</ul>");
-        sb.append("<ul class=\"bg-danger\">%s");
-        sb.append("</ul>");
-        sb.append("<ul class=\"bg-success\">%s");
-        sb.append("</ul>");
+        sb.append("<table class=\"table table-hover\">");
+        sb.append("<thead>");
+        sb.append("<tr>");
+        sb.append("<th>#</th>");
+        sb.append("<th>Name</th>");
+        sb.append("<th>Message</th>");
+        sb.append("<th>Reason</th>");
+        sb.append("<th>Line</th>");
+        sb.append("<th>Paragraph</th>");
+        sb.append("</tr>");
+        sb.append("</thead>");
+        sb.append("<tbody>");
+        sb.append("%s");
+        sb.append("%s");
+        sb.append("%s");
+        sb.append("</tbody>");
+        sb.append("</table>");
         sb.append("<p class=\"bg-info\">%s</p>");
         sb.append("</div>");
         sb.append("</body>");
