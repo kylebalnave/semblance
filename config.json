@@ -1,69 +1,98 @@
 {
-   "classpaths" : [
-       "../affirmation/dist/",
-       "../disparity/dist/",
-       "../snapshot/dist/"
-   ],
-   "dev":[
-
-   ],
-   "dist":{
-      "runners":[
-         {
-            "className":"snapshot.runners.SnapshotRunner",
-            "out":"./snaps/",
-            "urls":[
-               "http://www.bbc.co.uk/"
-            ],
-            "dimensions":[
-               [
-                  1600,
-                  1200
-               ]
-            ],
-            "drivers":[
-               {
-                  "name":"firefox",
-                  "version":"",
-                  "hub":""
-               }
-            ],
-            "reports":[
-               {
-                  "className":"semblance.reporters.JunitReport",
-                  "out":"./reports/snapshot.junit"
-               }
-            ]
-         },
-         {
-            "className":"disparity.runners.DisparityRunner",
-            "in":"./snaps/",
-            "out":"./snaps/",
-            "fuzzyness":40,
-            "reports":[
-               {
-                  "className":"semblance.reporters.JunitReport",
-                  "out":"./reports/disparity.junit"
-               }
-            ]
-         },
-         {
-            "className":"affirmation.runners.AffirmationRunner",
-            "w3cServiceUrl":"http://validator.w3.org/check",
-            "urls":[
-               "http://www.bbc.co.uk/"
-            ],
-            "ignore":[
-               "Syntax of list of link-type keywords",
-               "Mistakes that can cause this error include"
-            ],
-            "reports":[
-               {
-                  "className":"semblance.reporters.JunitReport",
-                  "out":"./reports/affirmation.junit"
-               }
-            ]
-         }
-      ]
-   }
+    "classpaths": [
+        "../affirmation/dist/",
+        "../disparity/dist/",
+        "../snapshot/dist/"
+    ],
+    "dev": [
+    ],
+    "dist": {
+        "runners": [
+            {
+                "className": "snapshot.runners.SnapshotRunner",
+                "out": "./snaps/",
+                "delayAfterLoadMs" : 1000,
+                "saveAsJpeg" : true,
+                "threads": 5,
+                "urls": [
+                    "http://www.bbc.co.uk/"
+                ],
+                "dimensions": [
+                    [
+                        2560,
+                        1600
+                    ],
+                    [
+                        1600,
+                        2560
+                    ],
+                    [
+                        1024,
+                        768
+                    ],
+                    [
+                        320,
+                        568
+                    ],
+                    [
+                        568,
+                        320
+                    ],
+                    [
+                        966,
+                        604
+                    ],
+                    [
+                        604,
+                        966
+                    ]
+                ],
+                "drivers": [
+                    {
+                        "name": "firefox",
+                        "version": "",
+                        "hub": ""
+                    }
+                ],
+                "reports": [
+                    {
+                        "className": "semblance.reporters.JunitReport",
+                        "out": "./reports/snapshot.junit"
+                    }
+                ]
+            },
+            {
+                "className": "disparity.runners.DisparityRunner",
+                "threads": 5,
+                "in": "./snaps/",
+                "useDirsMatchingPattern": "^\\d{4}-\\d{2}-\\d{2}\\s{1}\\d{2}-\\d{2}-\\d{2}$",
+                "keepOnlyComparedDirs": true,
+                "out": "./snaps/",
+                "fuzzyness": 10,
+                "reports": [
+                    {
+                        "className": "semblance.reporters.JunitReport",
+                        "out": "./reports/disparity.junit"
+                    }
+                ]
+            },
+            {
+                "className": "affirmation.runners.AffirmationRunner",
+                "w3cServiceUrl": "http://validator.w3.org/check",
+                "urls": [
+                    "http://www.bbc.co.uk/"
+                ],
+                "ignore": [
+                    "Syntax of list of link-type keywords",
+                    "Mistakes that can cause this error include"
+                ],
+                "reports": [
+                    {
+                        "className": "semblance.reporters.JunitReport",
+                        "out": "./reports/affirmation.junit"
+                    }
+                ]
+            }
+        ]
+    }
 }

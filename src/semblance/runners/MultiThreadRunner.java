@@ -33,6 +33,8 @@ import semblance.results.IResult;
  * @author kyleb2
  */
 public abstract class MultiThreadRunner extends Runner {
+    
+    public static final String KEY_THREADS = "threads";
 
     public MultiThreadRunner(Map config) {
         super(config);
@@ -45,7 +47,7 @@ public abstract class MultiThreadRunner extends Runner {
     @Override
     public List<IResult> call() throws Exception, Error {
         results = new ArrayList<IResult>();
-        int threadCount = ((Number) getConfigValue("threads", 5)).intValue();
+        int threadCount = ((Number) getConfigValue(KEY_THREADS, 5)).intValue();
         ExecutorService execSvc = Executors.newFixedThreadPool(threadCount);
         List<Runner> queue = getRunnerCollection();
         Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Start thread pool of size %s with %s threads", queue.size(), threadCount));
